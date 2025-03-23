@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Tinder - AI Dating App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login/Signup Section -->
+        <div id="auth-container" class="auth-container">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showTab('login')">Login</button>
+                <button class="auth-tab" onclick="showTab('signup')">Sign Up</button>
+            </div>
+            
+            <div id="login-form" class="auth-form active">
+                <h2>Welcome Back</h2>
+                <form onsubmit="loginUser(event)">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+            </div>
+            
+            <div id="signup-form" class="auth-form">
+                <h2>Create Account</h2>
+                <form onsubmit="signupUser(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-dob">Date of Birth</label>
+                        <input type="date" id="signup-dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-interests">Interests (comma separated)</label>
+                        <input type="text" id="signup-interests" placeholder="AI, Blockchain, Art, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-solana">Solana Tokens/Coins</label>
+                        <input type="text" id="signup-solana" placeholder="SOL, BONK, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-ai-style">Your AI Style</label>
+                        <textarea id="signup-ai-style" placeholder="Describe your AI prompt style and creative approach..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-pic">Profile Picture</label>
+                        <input type="file" id="profile-pic" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main App Section (Hidden until logged in) -->
+        <div id="main-app" class="main-app hidden">
+            <!-- Header with navigation -->
+            <header class="app-header">
+                <div class="logo">
+                    <h1>Prompt<span>Tinder</span></h1>
+                </div>
+                <nav class="app-nav">
+                    <button class="nav-btn active" onclick="showSection('swipe')">
+                        <i class="fas fa-fire"></i>
+                    </button>
+                    <button class="nav-btn" onclick="showSection('matches')">
+                        <i class="fas fa-comments"></i>
+                        <span id="unread-count" class="unread-count hidden">0</span>
+                    </button>
+                    <button class="nav-btn" onclick="showSection('profile')">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </nav>
+            </header>
+
+            <!-- Swipe Section -->
+            <section id="swipe-section" class="app-section active">
+                <div class="card-container">
+                    <div class="card-stack" id="card-stack">
+                        <!-- Cards will be inserted here by JavaScript -->
+                    </div>
+                    <div class="swipe-buttons">
+                        <button class="swipe-btn dislike" onclick="swipeLeft()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="swipe-btn like" onclick="swipeRight()">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Matches and Chat Section -->
+            <section id="matches-section" class="app-section">
+                <div class="matches-container">
+                    <h2>Your Matches</h2>
+                    <div class="match-list" id="match-list">
+                        <!-- Match list will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="chat-container hidden" id="chat-container">
+                    <div class="chat-header">
+                        <button class="back-btn" onclick="backToMatches()">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-user-info">
+                            <img src="" id="chat-user-img" alt="Profile picture">
+                            <span id="chat-user-name"></span>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be populated here -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="message-input" placeholder="Type a message...">
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="app-section">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <h2>Your Profile</h2>
+                        <button class="edit-profile-btn" onclick="toggleEditProfile()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <div class="profile-view" id="profile-view">
+                        <div class="profile-picture">
+                            <img id="user-profile-pic" src="default-profile.jpg" alt="Profile picture">
+                        </div>
+                        <div class="profile-info">
+                            <h3 id="profile-name"></h3>
+                            <p id="profile-username"></p>
+                            <p id="profile-age"></p>
+                            <div class="profile-section">
+                                <h4>Interests</h4>
+                                <div id="profile-interests" class="tags-container"></div>
+                            </div>
+                            <div class="profile-section">
+                                <h4>Solana Tokens</h4>
+                                <div id="profile-solana" class="tags-container"></div>
+                            </div>
+                            <div class="profile-section">
+                                <h4>AI Style</h4>
+                                <p id="profile-ai-style"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-edit hidden" id="profile-edit">
+                        <form onsubmit="updateProfile(event)">
+                            <div class="form-group">
+                                <label for="edit-profile-pic">Profile Picture</label>
+                                <input type="file" id="edit-profile-pic" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-name">Full Name</label>
+                                <input type="text" id="edit-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-interests">Interests (comma separated)</label>
+                                <input type="text" id="edit-interests" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-solana">Solana Tokens (comma separated)</label>
+                                <input type="text" id="edit-solana">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-ai-style">AI Style</label>
+                                <textarea id="edit-ai-style" required></textarea>
+                            </div>
+                            <div class="button-group">
+                                <button type="button" class="btn-secondary" onclick="toggleEditProfile()">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <button class="btn-danger logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
